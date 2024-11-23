@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id      Int     @id @default(autoincrement())
+  text    String  @db.VarChar(1000)
+  likes   Int     @default(0)
+  reposts Int     @default(0)
+  createdAt DateTime
+  authorId  String
+  did     String
+
+  @@index(fields: [did])
+}
+
+model Like {
+  id      Int     @id @default(autoincrement())
+  postId  String
+  createdAt DateTime
+
+  @@index(fields: [postId])
+}
+
+model Repost {
+  id      Int     @id @default(autoincrement())
+  postId  String
+  createdAt DateTime
+
+  @@index(fields: [postId])
+}
+
+model User {
+  id      Int      @id @default(autoincrement())
+  did     String
+}

@@ -12,6 +12,7 @@ import {
   isCommit,
 } from '../lexicon/types/com/atproto/sync/subscribeRepos'
 import { Database } from '../db'
+import { PrismaClient } from '@prisma/client'
 
 export abstract class FirehoseSubscriptionBase {
   public sub: Subscription<RepoEvent>

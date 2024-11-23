@@ -9,6 +9,7 @@ import { createDb, Database, migrateToLatest } from './db'
 import { FirehoseSubscription } from './subscription'
 import { AppContext, Config } from './config'
 import wellKnown from './well-known'
+import { PrismaClient } from '@prisma/client'
 
 export class FeedGenerator {
   public app: express.Application
@@ -32,7 +33,8 @@ export class FeedGenerator {
   static create(cfg: Config) {
     const app = express()
     const db = createDb(cfg.sqliteLocation)
-    const firehose = new FirehoseSubscription(db, cfg.subscriptionEndpoint)
+    const prisma = new PrismaClient()
+    const firehose = new FirehoseSubscription(db, cfg.subscriptionEndpoint, prisma)
 
     const didCache = new MemoryCache()
     const didResolver = new DidResolver({
