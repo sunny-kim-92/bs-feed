@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,34 +8,76 @@ datasource db {
 }
 
 model Post {
-  id      Int     @id @default(autoincrement())
-  text    String  @db.VarChar(1000)
-  likes   Int     @default(0)
-  reposts Int     @default(0)
+  id        Int        @id @default(autoincrement())
+  text      String     @db.VarChar(1000)
+  likes     Int        @default(0)
+  reposts   Int        @default(0)
+  linkId    Int?
   createdAt DateTime
   authorId  String
-  did     String
+  did       String     @unique
+  link      Link?      @relation(fields: [linkId], references: [id])
+  languages Language[] @relation("LanguagePosts")
 
-  @@index(fields: [did])
+  @@index([did])
+  @@index([createdAt])
+  @@index([linkId], map: "Post_linkId_fkey")
+}
+
+model Link {
+  id          Int     @id @default(autoincrement())
+  url         String  @unique @db.VarChar(512)
+  title       String? @db.VarChar(1000)
+  description String? @db.VarChar(1000)
+  posts       Post[]
 }
 
 model Like {
-  id      Int     @id @default(autoincrement())
-  postId  String
+  id        Int      @id @default(autoincrement())
+  postId    String
   createdAt DateTime
 
-  @@index(fields: [postId])
+  @@index([postId])
+  @@index([createdAt])
 }
 
 model Repost {
-  id      Int     @id @default(autoincrement())
-  postId  String
+  id        Int      @id @default(autoincrement())
+  postId    String
   createdAt DateTime
 
-  @@index(fields: [postId])
+  @@index([postId])
+  @@index([createdAt])
+}
+
+model Reply {
+  id        Int       @id @default(autoincrement())
+  postId    String?   @db.VarChar(255)
+  createdAt DateTime? @db.DateTime(0)
+
+  @@index([postId])
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  did     String
+  id  Int    @id @default(autoincrement())
+  did String
+}
+
+model Language {
+  id    Int    @id @default(autoincrement())
+  code  String @unique @db.VarChar(3)
+  posts Post[] @relation("LanguagePosts")
+}
+
+model PageRank {
+  id          Int       @id @default(autoincrement())
+  linkId      Int
+  url         String    @unique(map: "url") @db.VarChar(512)
+  title       String?   @db.VarChar(512)
+  description String?   @db.VarChar(1000)
+  score       Int?
+  likes       Int?
+  reposts     Int?
+  replies     Int?
+  createdAt   DateTime? @db.DateTime(0)
 }
