@@ -72,12 +72,13 @@ model Language {
 model PageRank {
   id          Int       @id @default(autoincrement())
   linkId      Int
-  url         String    @unique(map: "url") @db.VarChar(512)
+  url         String    @db.VarChar(512)
   title       String?   @db.VarChar(512)
   description String?   @db.VarChar(1000)
   score       Int?
   likes       Int?
   reposts     Int?
   replies     Int?
+  batch       Int?
   createdAt   DateTime? @db.DateTime(0)
 }
