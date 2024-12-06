@@ -80,5 +80,6 @@ model PageRank {
   reposts     Int?
   replies     Int?
   batch       Int?
+  ranking     Int?
   createdAt   DateTime? @db.DateTime(0)
 }
